@@ -45,9 +45,19 @@ local function SecondsToClock(seconds)
 end
 
 minetest.register_chatcommand("playtime", {
-  params = "",
+  params = "<player_name>",
   description = "Use it to get your own playtime!",
-  func = function(name)
-    minetest.chat_send_player(name, "Total: "..SecondsToClock(playtime.get_total_playtime(name)).." Current: "..SecondsToClock(playtime.get_current_playtime(name)))
+  func = function(name, player_name)
+    if player_name == nil then
+      player_name = name
+    end
+    if player_name == '' and minetest.is_singleplayer() then
+      player_name = 'singleplayer'
+    end
+    if (minetest.player_exists(player_name) ~= true) then
+      return  true,'player "'..player_name..'" does not excist.'
+    end
+    minetest.chat_send_player(name, 'Play Time For '.. player_name)
+    minetest.chat_send_player(name, "Total: "..SecondsToClock(playtime.get_total_playtime(player_name)).." Current: "..SecondsToClock(playtime.get_current_playtime(player_name)))
   end,
 })
